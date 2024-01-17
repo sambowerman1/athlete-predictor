@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <title>Athlete Performance Predictor</title>
+    <style>
+        .form-group {
+            display: inline-block;
+            margin-right: 10px;
+        }
+        #result {
+            margin-top: 20px;
+        }
+    </style>
+    <script>
+        function submitForm(event) {
+            event.preventDefault();
+            
+            var eventValue = document.getElementById('eventSelect').value;
+            var genderValue = document.getElementById('genderSelect').value;
+            var prValue = document.getElementById('prInput').value;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/predict", true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function() {
+                if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                    document.getElementById('result').innerText = this.responseText;
+                }
+            }
+
+            xhr.send('event=' + encodeURIComponent(eventValue) + '&gender=' + encodeURIComponent(genderValue) + '&pr=' + encodeURIComponent(prValue));
+        }
+    </script>
+</head>
+<body>
+    <nav class="container-fluid">
+        <ul>
+            <li><strong>Athlete Performance Predictor</strong></li>
+        </ul>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#" role="button">Contact</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <div class="grid">
+            <section>
+                <h1>Track Performance Prediction</h1>
+                <p>Enter Your Details</p>
+                <form onsubmit="submitForm(event)">
+                    <div class="form-group">
+                        <label for="eventSelect">Event:</label>
+                        <select id="eventSelect" name="event">
+                            <option value="longjump">Long Jump</option>
+                            <option value="triplejump">Triple Jump</option>
+                            <option value="1600m">1600m</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="genderSelect">Gender:</label>
+                        <select id="genderSelect" name="gender">
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prInput">Junior Year PR:</label>
+                        <input type="number" id="prInput" name="pr" step="0.01" required>
+                    </div>
+
+                    <button type="submit">Calculate</button>
+                </form>
+                <div id="result"></div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="container">
+        <small><a href="#">Privacy Policy</a> • <a href="#">Terms of Use</a></small>
+    </footer>
+</body>
+</html>
