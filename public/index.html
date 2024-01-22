@@ -13,27 +13,14 @@
         #result {
             margin-top: 20px;
         }
-    </style>
-    <script>
-        function submitForm(event) {
-            event.preventDefault();
-            
-            var eventValue = document.getElementById('eventSelect').value;
-            var genderValue = document.getElementById('genderSelect').value;
-            var prValue = document.getElementById('prInput').value;
-
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "/predict", true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onreadystatechange = function() {
-                if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-                    document.getElementById('result').innerText = this.responseText;
-                }
-            }
-
-            xhr.send('event=' + encodeURIComponent(eventValue) + '&gender=' + encodeURIComponent(genderValue) + '&pr=' + encodeURIComponent(prValue));
+        #myChart {
+            max-width: 100%;
+            max-height: 400px;
+            background-color: white;
+            margin: 0 auto;
         }
-    </script>
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <nav class="container-fluid">
@@ -80,10 +67,116 @@
                 <div id="result"></div>
             </section>
         </div>
+        <canvas id="myChart" style="display: none;"></canvas>
     </main>
 
     <footer class="container">
         <small><a href="#">Privacy Policy</a> • <a href="#">Terms of Use</a></small>
     </footer>
+
+    <script>
+        function submitForm(event) {
+            event.preventDefault();
+            
+            var eventValue = document.getElementById('eventSelect').value;
+            var genderValue = document.getElementById('genderSelect').value;
+            var prValue = document.getElementById('prInput').value;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/predict", true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function() {
+                if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                    var responseText = this.responseText;
+                    document.getElementById('result').innerText = responseText;
+                    if (!responseText.includes("Coming soon")) {
+                        var predictedPr = parseFloat(responseText.match(/(\d+(\.\d+)?)/)[0]);
+                        fetchEventData(eventValue, genderValue, prValue, predictedPr);
+                    }
+                }
+            };
+
+            xhr.send('event=' + encodeURIComponent(eventValue) + '&gender=' + encodeURIComponent(genderValue) + '&pr=' + encodeURIComponent(prValue));
+        }
+
+        function fetchEventData(eventValue, genderValue, prValue, predictedPr) {
+            fetch(`/jump-data?event=${eventValue}&gender=${genderValue}`)
+                .then(response => response.json())
+                .then(data => {
+                    createChart(data, prValue, predictedPr);
+                    document.getElementById('myChart').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error fetching event data:', error);
+                    document.getElementById('result').innerText = 'Error loading chart data.';
+                });
+        }
+
+        function createChart(data, prValue, predictedPr) {
+            const ctx = document.getElementById('myChart').getContext('2d');
+            
+            const divisionColors = {
+                '1': 'gold',
+                '2': 'silver',
+                '3': 'bronze'
+            };
+
+            let datasets = Object.keys(divisionColors).map(division => ({
+                label: `Division ${division}`,
+                data: data.filter(item => item.Division === division).map(item => ({
+                    x: parseFloat(item.PR),
+                    y: parseFloat(item.CollegePR)
+                })),
+                backgroundColor: divisionColors[division],
+                showLine: false,
+            }));
+
+            datasets.push({
+                label: 'User Input',
+                data: [{
+                    x: parseFloat(prValue),
+                    y: parseFloat(predictedPr)
+                }],
+                backgroundColor: 'red',
+                showLine: false,
+            });
+
+            if (window.myChartInstance) {
+                window.myChartInstance.destroy();
+            }
+
+            window.myChartInstance = new Chart(ctx, {
+                type: 'scatter',
+                data: { datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Junior Year PR'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Predicted College PR'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            mode: 'point'
+                        }
+                    }
+                }
+            });
+        }
+    </script>
 </body>
 </html>
