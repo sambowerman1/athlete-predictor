@@ -5,6 +5,13 @@ const csv = require('csv-parser');
 
 const app = express();
 
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}.${((seconds % 60) - remainingSeconds).toFixed(2).slice(2)}`;
+}
+
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
@@ -29,7 +36,15 @@ app.post('/predict', (req, res) => {
         return res.send("Coming soon!");
     }
 
-    res.send(`Your predicted mark for your Freshman year of college is: ${predictedMark.toFixed(2)}.`);
+    let responseMessage;
+    if (event === '1600m') {
+        responseMessage = `Your predicted mark for your Freshman year of college is: ${formatTime(predictedMark)}.`;
+    } else {
+        responseMessage = `Your predicted mark for your Freshman year of college is: ${predictedMark.toFixed(2)}.`;
+    }
+
+    res.send(responseMessage);
+    
 });
 
 app.get('/jump-data', (req, res) => {
