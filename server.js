@@ -23,7 +23,9 @@ app.post('/predict', (req, res) => {
         predictedMark = 0.699 * pr + 3.458;
     } else if (gender === 'female' && event === 'longjump') {
         predictedMark = 0.698 * pr + 1.611;
-    } else {
+    } else if (gender === 'male' && event === '1600m') {
+        predictedMark =  0.627 * pr + 76.08;
+    }else {
         return res.send("Coming soon!");
     }
 
@@ -43,12 +45,18 @@ app.get('/jump-data', (req, res) => {
         filename = 'WomensTripleMatchedJumpers.csv';
     } else if (gender === 'female' && event === 'longjump') {
         filename = 'WomensLongMatchedJumpers.csv';
+    } else if (gender === 'male' && event === '1600m') {
+        filename = 'Mens1500mMatched.csv';
     }
 
     const results = [];
     fs.createReadStream(filename)
         .pipe(csv())
         .on('data', (data) => results.push(data))
+        .on('error', (error) => {
+            console.error(`Error reading or parsing file ${filename}:`, error);
+            res.status(500).send('Server error');
+        })
         .on('end', () => {
             res.json(results);
         });
