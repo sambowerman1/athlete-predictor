@@ -86,15 +86,36 @@
             xhr.open("POST", "/predict", true);
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             xhr.onreadystatechange = function() {
+                
                 if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-                    var responseText = this.responseText;
-                    document.getElementById('result').innerText = responseText;
-                    if (!responseText.includes("Coming soon")) {
-                        var predictedPr = parseFloat(responseText.match(/(\d+(\.\d+)?)/)[0]);
-                        fetchEventData(eventValue, genderValue, prValue, predictedPr);
+                    // var responseText = this.responseText;
+                    var response = JSON.parse(this.responseText);
+                    var responseText;
+                    var predictedPr;
+                    if (typeof response === 'object' && response.message) {
+                        responseText = response.message;
+                        predictedPr = parseFloat(response.predictedMark); // Use raw seconds for chart
+                        document.getElementById('result').innerText = responseText;
+                    } else {
+                        responseText = response;
+                        document.getElementById('result').innerText = responseText;
+                        predictedPr = parseFloat(responseText.match(/(\d+(\.\d+)?)/)[0]);
                     }
-                }
-            };
+                    if (!responseText.includes("Coming soon")) {
+                fetchEventData(eventValue, genderValue, prValue, predictedPr);
+            }
+        }
+    };
+
+
+
+                //     document.getElementById('result').innerText = responseText;
+                //     if (!responseText.includes("Coming soon")) {
+                //         var predictedPr = parseFloat(responseText.match(/(\d+(\.\d+)?)/)[0]);
+                //         fetchEventData(eventValue, genderValue, prValue, predictedPr);
+                //     }
+                // }
+           
 
             xhr.send('event=' + encodeURIComponent(eventValue) + '&gender=' + encodeURIComponent(genderValue) + '&pr=' + encodeURIComponent(prValue));
         }

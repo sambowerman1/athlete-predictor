@@ -38,12 +38,19 @@ app.post('/predict', (req, res) => {
 
     let responseMessage;
     if (event === '1600m') {
-        responseMessage = `Your predicted mark for your Freshman year of college is: ${formatTime(predictedMark)}.`;
+        // responseMessage = `Your predicted mark for your Freshman year of college is: ${formatTime(predictedMark)}.`;
+        // responseMessage = `Your predicted mark for your Freshman year of college is: ${predictedMark.toFixed(2)}.`;
+        responseMessage = {
+            message: `Your predicted mark for your Freshman year of college is: ${formatTime(predictedMark)}.`,
+            predictedMark: predictedMark.toFixed(2), // keep as seconds for charting
+            formattedTime: formatTime(predictedMark) // formatted for display
+        };
     } else {
         responseMessage = `Your predicted mark for your Freshman year of college is: ${predictedMark.toFixed(2)}.`;
     }
 
-    res.send(responseMessage);
+    // res.send(responseMessage);
+    res.json(responseMessage);
     
 });
 
