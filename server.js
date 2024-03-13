@@ -32,7 +32,11 @@ app.post('/predict', (req, res) => {
         predictedMark = 0.698 * pr + 1.611;
     } else if (gender === 'male' && event === '1600m') {
         predictedMark =  0.627 * pr + 76.08;
-    }else {
+    }
+        else if (gender === 'female' && event === '1600m') {
+            predictedMark =  0.642 * pr + 88.96;
+        }   
+    else {
         return res.send("Coming soon!");
     }
 
@@ -69,7 +73,12 @@ app.get('/jump-data', (req, res) => {
         filename = 'WomensLongMatchedJumpers.csv';
     } else if (gender === 'male' && event === '1600m') {
         filename = 'Mens1500mMatched.csv';
+        
     }
+    else if (gender === 'female' && event === '1600m') {
+        filename = 'Womens1500mMatched.csv';
+    }
+
 
     const results = [];
     fs.createReadStream(filename)
