@@ -38,14 +38,16 @@ app.post('/predict', (req, res) => {
         predictedMark = 0.713 * pr + 13.88;
     } else if (gender == 'female' && event === '400m') {
         predictedMark = 0.706 * pr + 17.40;
-    } 
+    } else if (gender == 'female' && event === '800m') {
+        predictedMark = 0.646 * pr + 50.56;
+    }
 
     else {
         return res.send("Coming soon!");
     }
 
     let responseMessage;
-    if (event === '1600m') {
+    if (event === '1600m' || event === '800m') {
         // responseMessage = `Your predicted mark for your Freshman year of college is: ${formatTime(predictedMark)}.`;
         // responseMessage = `Your predicted mark for your Freshman year of college is: ${predictedMark.toFixed(2)}.`;
         responseMessage = {
@@ -85,6 +87,8 @@ app.get('/jump-data', (req, res) => {
         filename = 'Mens400mMatched.csv';
     } else if (gender == 'female' && event === '400m') {
         filename = 'Womens400mMatched.csv';
+    } else if (gender == 'female' && event === '800m') {
+        filename = 'Womens800mMatched.csv';
     }
 
 
