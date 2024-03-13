@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -200,6 +200,224 @@
                 }
             });
         }
+    </script>
+</body>
+</html> -->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <title>Athlete Performance Predictor</title>
+    <style>
+        .form-group {
+            display: inline-block; /* Keep inline */
+            margin-right: 10px;
+        }
+        #result {
+            margin-top: 20px;
+        }
+        #myChart {
+            max-width: 100%;
+            max-height: 400px;
+            background-color: white;
+            margin: 0 auto;
+        }
+        #timeInputs {
+            display: none; /* Initially hidden */
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="container-fluid">
+        <ul>
+            <li><strong>Athlete Performance Predictor</strong></li>
+        </ul>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#" role="button">Contact</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <div class="grid">
+            <section>
+                <h1>Track Performance Prediction</h1>
+                <p>Enter Your Details</p>
+                <form onsubmit="submitForm(event)">
+                    <div class="form-group">
+                        <label for="eventSelect">Event:</label>
+                        <select id="eventSelect" name="event">
+                            <option value="longjump">Long Jump</option>
+                            <option value="triplejump">Triple Jump</option>
+                            <option value="400m">400m</option>
+                            <option value="1600m">1600m</option>
+                            <option value="800m">800m</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="genderSelect">Gender:</label>
+                        <select id="genderSelect" name="gender">
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+
+                    <!-- Time inputs for 1600m event, displayed inline -->
+                    <div id="timeInputs" class="form-group">
+                        <label for="minutesInput">Min:</label>
+                        <input type="number" id="minutesInput" name="minutes" min="0">
+                        <label for="secondsInput">Sec:</label>
+                        <input type="number" id="secondsInput" name="seconds" step="0.01" min="0" max="59.99">
+                    </div>
+
+                    <div class="form-group" id="prGroup">
+                        <label for="prInput">Junior Year PR:</label>
+                        <input type="number" id="prInput" name="pr" step="0.01" required>
+                    </div>
+
+                    <button type="submit" class="form-group">Calculate</button>
+                </form>
+                <div id="result"></div>
+            </section>
+        </div>
+        <canvas id="myChart" style="display: none;"></canvas>
+    </main>
+
+    <footer class="container">
+        <small><a href="#">Privacy Policy</a> • <a href="#">Terms of Use</a></small>
+    </footer>
+
+    <script>
+        document.getElementById('eventSelect').addEventListener('change', function() {
+            var timeInputs = document.getElementById('timeInputs');
+            var prInput = document.getElementById('prGroup');
+            if (this.value === '1600m') {
+                timeInputs.style.display = 'inline';
+                prInput.style.display = 'none';
+            } else {
+                timeInputs.style.display = 'none';
+                prInput.style.display = 'inline';
+            }
+        });
+
+        function submitForm(event) {
+            event.preventDefault();
+            var eventValue = document.getElementById('eventSelect').value;
+            var genderValue = document.getElementById('genderSelect').value;
+            var prValue;
+
+            if (eventValue === '1600m') {
+                var minutes = parseInt(document.getElementById('minutesInput').value) || 0;
+                var seconds = parseFloat(document.getElementById('secondsInput').value) || 0;
+                prValue = (minutes * 60 + seconds).toString(); // Convert to seconds
+            } else {
+                prValue = document.getElementById('prInput').value;
+            }
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/predict", true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function() {
+                if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                    var response = JSON.parse(this.responseText);
+                    var responseText = typeof response === 'object' && response.message ? response.message : this.responseText;
+                    document.getElementById('result').innerText = responseText;
+                    if (!responseText.includes("Coming soon")) {
+                        var predictedPr = parseFloat(response.predictedMark); // Use raw seconds for chart, adjust based on response structure
+                        fetchEventData(eventValue, genderValue, prValue, predictedPr);
+                    }
+                }
+            };
+            xhr.send('event=' + encodeURIComponent(eventValue) + '&gender=' + encodeURIComponent(genderValue) + '&pr=' + encodeURIComponent(prValue));
+        }
+
+        function fetchEventData(eventValue, genderValue, prValue, predictedPr) {
+            fetch(`/jump-data?event=${eventValue}&gender=${genderValue}`)
+                .then(response => response.json())
+                .then(data => {
+                    createChart(data, prValue, predictedPr);
+                    document.getElementById('myChart').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error fetching event data:', error);
+                    document.getElementById('result').innerText = 'Error loading chart data.';
+                });
+        }
+
+        function createChart(data, prValue, predictedPr) {
+            const ctx = document.getElementById('myChart').getContext('2d');
+            
+            const divisionColors = {
+                '1': 'gold',
+                '2': 'silver',
+                '3': 'bronze'
+            };
+
+            let datasets = Object.keys(divisionColors).map(division => ({
+                label: `Division ${division}`,
+                data: data.filter(item => item.Division === division).map(item => ({
+                    x: parseFloat(item.PR),
+                    y: parseFloat(item.CollegePR)
+                })),
+                backgroundColor: divisionColors[division],
+                showLine: false,
+            }));
+
+            datasets.push({
+                label: 'User Input',
+                data: [{
+                    x: parseFloat(prValue),
+                    y: parseFloat(predictedPr)
+                }],
+                backgroundColor: 'red',
+                showLine: false,
+            });
+
+            if (window.myChartInstance) {
+                window.myChartInstance.destroy();
+            }
+
+            window.myChartInstance = new Chart(ctx, {
+                type: 'scatter',
+                data: { datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Junior Year PR'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Predicted College PR'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            mode: 'point'
+                        }
+                    }
+                }
+            });
+        }
+
     </script>
 </body>
 </html>
