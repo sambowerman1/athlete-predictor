@@ -152,6 +152,8 @@
                 })),
                 backgroundColor: divisionColors[division],
                 showLine: false,
+                order : 1,
+                
             }));
 
             datasets.push({
@@ -161,7 +163,10 @@
                     y: parseFloat(predictedPr)
                 }],
                 backgroundColor: 'red',
+                
                 showLine: false,
+                order : 0,
+                // pointRadius : 
             });
 
             if (window.myChartInstance) {
