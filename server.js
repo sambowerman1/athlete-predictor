@@ -15,6 +15,7 @@ function formatTime(seconds) {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
+
 app.post('/predict', (req, res) => {
     const event = req.body.event;
     const gender = req.body.gender;
@@ -104,6 +105,11 @@ app.get('/jump-data', (req, res) => {
             res.json(results);
         });
 });
+
+app.get('/about', (req, res) => {
+    res.sendFile(__dirname + '/public/about.html'); 
+});
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
