@@ -79,7 +79,7 @@
             var prInput = document.getElementById('prInput');
 
             eventSelect.addEventListener('change', function() {
-                if (this.value === '1600m') {
+                if (this.value === '1600m' || this.value === '800m') {
                     prInput.placeholder = "Minutes:Seconds";
                     prInput.type = "text"; // Change the input type to text for custom formatting
                 } else {
@@ -102,7 +102,7 @@
             var genderValue = document.getElementById('genderSelect').value;
             var prValue = document.getElementById('prInput').value;
 
-            if (eventValue === '1600m') {
+            if (eventValue === '1600m' || eventValue === '800m') {
                 var parts = prValue.split(':');
                 prValue = parseInt(parts[0], 10) * 60 + parseFloat(parts[1]);
             }
