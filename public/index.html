@@ -74,12 +74,46 @@
 
     
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var eventSelect = document.getElementById('eventSelect');
+            var prInput = document.getElementById('prInput');
+
+            eventSelect.addEventListener('change', function() {
+                if (this.value === '1600m') {
+                    prInput.placeholder = "Minutes:Seconds";
+                    prInput.type = "text"; // Change the input type to text for custom formatting
+                } else {
+                    prInput.placeholder = "Enter PR";
+                    prInput.type = "number"; // Change back to number for other events
+                }
+            });
+        });
+
+
+
+
+
+
+
         function submitForm(event) {
             event.preventDefault();
             
             var eventValue = document.getElementById('eventSelect').value;
             var genderValue = document.getElementById('genderSelect').value;
             var prValue = document.getElementById('prInput').value;
+
+            if (eventValue === '1600m') {
+                var parts = prValue.split(':');
+                prValue = parseInt(parts[0], 10) * 60 + parseFloat(parts[1]);
+            }
+
+            var formData = 'event=' + encodeURIComponent(eventValue) +
+                           '&gender=' + encodeURIComponent(genderValue) +
+                           '&pr=' + encodeURIComponent(prValue);
+
+
+
+
 
             var xhr = new XMLHttpRequest();
             xhr.open("POST", "/predict", true);
