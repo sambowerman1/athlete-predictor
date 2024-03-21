@@ -25,7 +25,7 @@ response.raise_for_status()  # Check if the login was successful
 
 # Base URL for scraping
 # base_url = 'https://www.athletic.net/TrackAndField/Division/Event.aspx?DivID=116302&Event=4&type=1' dont delete
-base_url = 'https://www.athletic.net/TrackAndField/Division/Event.aspx?DivID=116302&Event=22&type=1&filter=11'
+base_url = 'https://www.athletic.net/TrackAndField/Division/Event.aspx?DivID=116302&Event=4&type=1&filter=11'
 
 # Open a file to write
 with open('/Users/sam/Desktop/track csvs/athletes.csv', 'w', newline='', encoding='utf-8') as file:
