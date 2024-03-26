@@ -45,7 +45,11 @@ app.post('/predict', (req, res) => {
      // CollegePR = .0.4889   x PR +59.7126
         predictedMark = 0.4889 * pr + 59.7126;
     } else if (gender == 'male' && event === '100m') {
-        predictedMark = 0.6681 * pr + 3.5700;
+        predictedMark = 0.6477  * pr + 3.7978;
+    } else if (gender == 'female' && event === '100m') {
+        predictedMark = 0.7422  *pr + 3.2057;
+    } else if (gender == 'male' && event === '200m') {
+        predictedMark = 0.6339   * pr + 7.9900;
     }
     else {
         return res.send("Coming soon!");
@@ -98,6 +102,10 @@ app.get('/jump-data', (req, res) => {
         filename = 'Mens800mMatched.csv';
     } else if (gender == 'male' && event === '100m') {
         filename = 'Mens100mMatched.csv';
+    } else if (gender == 'female' && event == '100m'){
+        filename = 'Womens100mMatched.csv';
+    } else if (gender == 'male' && event == '200m'){
+        filename = 'Mens200mMatched.csv';
     }
 
 

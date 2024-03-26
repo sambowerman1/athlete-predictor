@@ -57,33 +57,33 @@ from sklearn.linear_model import LinearRegression
 from sklearn import metrics
 
 
-def linear_regression(Path):
-    df = pd.read_csv(Path)
+# def linear_regression(Path):
+#     df = pd.read_csv(Path)
 
-    # Reshape the data to 2D arrays (which is required by the LinearRegression model)
-    X = df['PR'].values.reshape(-1,1)
-    Y = df['CollegePR'].values.reshape(-1,1)
+#     # Reshape the data to 2D arrays (which is required by the LinearRegression model)
+#     X = df['PR'].values.reshape(-1,1)
+#     Y = df['CollegePR'].values.reshape(-1,1)
 
-    # Split the data into training set and test set
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
+#     # Split the data into training set and test set
+#     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
 
-    # Create a LinearRegression object
-    model = LinearRegression()
+#     # Create a LinearRegression object
+#     model = LinearRegression()
 
-    # Train the model using the training sets
-    model.fit(X_train, Y_train)
+#     # Train the model using the training sets
+#     model.fit(X_train, Y_train)
 
-    # Make predictions using the testing set
-    Y_pred = model.predict(X_test)
+#     # Make predictions using the testing set
+#     Y_pred = model.predict(X_test)
 
-    # Print the coefficients
-    print('Coefficients: \n', model.coef_)
+#     # Print the coefficients
+#     print('Coefficients: \n', model.coef_)
 
-    # Print the mean squared error
-    print('Mean squared error: %.2f' % metrics.mean_squared_error(Y_test, Y_pred))
+#     # Print the mean squared error
+#     print('Mean squared error: %.2f' % metrics.mean_squared_error(Y_test, Y_pred))
 
-    # Print the coefficient of determination: 1 is perfect prediction
-    print('Coefficient of determination: %.2f' % metrics.r2_score(Y_test, Y_pred))
+#     # Print the coefficient of determination: 1 is perfect prediction
+#     print('Coefficient of determination: %.2f' % metrics.r2_score(Y_test, Y_pred))
 
 
 if __name__ == '__main__':
@@ -91,12 +91,12 @@ if __name__ == '__main__':
 
     
 
-    BoysLink = 'https://www.athletic.net/TrackAndField/Division/Event.aspx?DivID=116302&Event=1&filter=11'
-    WriteFile = '/Users/sam/Desktop/track csvs/events/mens100/Boys100m.csv'
+    BoysLink = 'https://www.athletic.net/TrackAndField/Division/Event.aspx?DivID=116302&Event=2&filter=11'
+    WriteFile = '/Users/sam/Desktop/track csvs/events/mens200/Boys200.csv'
     BoysPath = WriteFile
-    CollegePath = '/Users/sam/Desktop/track csvs/events/mens100/Mens100m.csv'
-    OutputPath = '/Users/sam/Desktop/track csvs/events/mens100/Mens100mMatched.csv'
-    signal.alarm(60)
+    CollegePath = '/Users/sam/Desktop/track csvs/events/mens200/Mens200m.csv'
+    OutputPath = '/Users/sam/Desktop/track csvs/events/mens200/Mens200mMatched.csv'
+    signal.alarm(120)
 
     try:
         scrape(BoysLink, WriteFile)
@@ -108,4 +108,4 @@ if __name__ == '__main__':
 
     CleanAndMerge(BoysPath, CollegePath, OutputPath)
 
-    linear_regression(OutputPath)
+    # linear_regression(OutputPath)
