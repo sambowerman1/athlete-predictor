@@ -91,11 +91,11 @@ if __name__ == '__main__':
 
     
 
-    BoysLink = 'https://www.athletic.net/TrackAndField/Division/Event.aspx?DivID=116302&Event=2&filter=11'
-    WriteFile = '/Users/sam/Desktop/track csvs/events/mens200/Boys200.csv'
+    BoysLink = 'https://www.athletic.net/TrackAndField/Division/Event.aspx?DivID=116302&Event=20&filter=11'
+    WriteFile = '/Users/sam/Desktop/track csvs/events/womens200/Girls200.csv'
     BoysPath = WriteFile
-    CollegePath = '/Users/sam/Desktop/track csvs/events/mens200/Mens200m.csv'
-    OutputPath = '/Users/sam/Desktop/track csvs/events/mens200/Mens200mMatched.csv'
+    CollegePath = '/Users/sam/Desktop/track csvs/events/womens200/Womens200m.csv'
+    OutputPath = '/Users/sam/Desktop/track csvs/events/womens200/Womens200mMatched.csv'
     signal.alarm(120)
 
     try:
