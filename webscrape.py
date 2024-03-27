@@ -76,5 +76,6 @@ def scrape(link, writefile):
 
 
 if __name__ == '__main__':
-    scrape('https://www.athletic.net/TrackAndField/Division/Event.aspx?DivID=116302&Event=1&type=1&filter=11', '/Users/sam/Desktop/track csvs/testathletes.csv')
+    # scrape('https://www.athletic.net/TrackAndField/Division/Event.aspx?DivID=116302&Event=1&type=1&filter=11', '/Users/sam/Desktop/track csvs/testathletes.csv')
 
+    print('e')

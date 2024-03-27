@@ -20,7 +20,7 @@ def CleanAndMerge(BoysPath, CollegePath, OutputPath):
         df = pd.read_csv(file_path)
         if is_college:
             df[name_field] = df[name_field].apply(convert_name)
-        df[time_field] = df[time_field].apply(time_to_seconds)
+        # df[time_field] = df[time_field].apply(time_to_seconds)
         return df
 
     # Load and prepare the datasets
@@ -34,7 +34,7 @@ def CleanAndMerge(BoysPath, CollegePath, OutputPath):
     consolidated_df = pd.merge(boys_df, college_df, on='Athlete', how='inner')
 
     # Select and rename the relevant columns for the output
-    consolidated_df = consolidated_df[['Division', 'Mark', 'Time']].rename(columns={'Mark': 'PR', 'Time': 'CollegePR'})
+    consolidated_df = consolidated_df[['Division', 'Mark', 'Mark2']].rename(columns={'Mark': 'PR', 'Time': 'CollegePR'})
 
     # Verify and save the output
     print("Consolidated DF is not empty:", not consolidated_df.empty)
@@ -91,11 +91,11 @@ if __name__ == '__main__':
 
     
 
-    BoysLink = 'https://www.athletic.net/TrackAndField/Division/Event.aspx?DivID=116302&Event=20&filter=11'
-    WriteFile = '/Users/sam/Desktop/track csvs/events/womens200/Girls200.csv'
+    BoysLink = 'https://www.athletic.net/TrackAndField/Division/Event.aspx?DivID=116302&Event=30&m=m&filter=11'
+    WriteFile = '/Users/sam/Desktop/track csvs/events/womensShotput/GirlsShot.csv'
     BoysPath = WriteFile
-    CollegePath = '/Users/sam/Desktop/track csvs/events/womens200/Womens200m.csv'
-    OutputPath = '/Users/sam/Desktop/track csvs/events/womens200/Womens200mMatched.csv'
+    CollegePath = '/Users/sam/Desktop/track csvs/events/womensShotput/WomensShotput.csv'
+    OutputPath = '/Users/sam/Desktop/track csvs/events/womensShotput/WomensShotputMatched.csv'
     signal.alarm(120)
 
     try:
